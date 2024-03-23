@@ -1,3 +1,4 @@
+import 'package:ad_test/methodchannel_service.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -29,12 +30,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final int _counter = 0;
 
   void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+    MethodChannelService().initFyberAd('12345');
   }
 
   @override
