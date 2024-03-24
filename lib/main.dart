@@ -1,5 +1,7 @@
-import 'package:ad_test/methodchannel_service.dart';
+import 'package:ad_test/ad/service/ad_service.dart';
 import 'package:flutter/material.dart';
+import 'ad/model/ad.dart';
+import 'ad/model/ad_listener.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,10 +32,49 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final int _counter = 0;
+  String _statusText = "No ad status";
 
-  void _incrementCounter() {
-    MethodChannelService().initFyberAd('12345');
+  void _requestAd() {
+    AdService.requestAd("placementId");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeAdService();
+  }
+
+  void initializeAdService() async {
+    await AdService.initialize("appKey");
+    attachAdListener();
+  }
+
+  void attachAdListener() {
+    AdService.setAdListener(
+      AdListener(
+        onAdLoadedCallback: (Ad ad) {
+          logStatus("Ad loaded: ${ad.placementId}");
+        },
+        onAdLoadFailedCallback: (String placementId, AdError error) {
+          logStatus("Ad failed to load: $placementId, ${error.message}");
+        },
+        onAdDisplayedCallback: (Ad ad) {
+          logStatus("Ad displayed: ${ad.placementId}");
+        },
+        onAdDisplayFailedCallback: (Ad ad, AdError error) {
+          logStatus("Ad failed to display: ${ad.placementId}, ${error.message}");
+        },
+      ),
+    );
+  }
+
+  void logStatus(String status) {
+    /// ignore: avoid_print
+    print(status);
+
+    setState(() {
+      _statusText = status;
+    });
   }
 
   @override
@@ -47,19 +88,15 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              _statusText,
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: _requestAd,
+        tooltip: 'Request Ad',
         child: const Icon(Icons.add),
       ),
     );
