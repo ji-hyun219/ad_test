@@ -21,16 +21,12 @@ class AdService {
         case "adLoaded":
           _adListener?.onAdLoadedCallback.call(Ad(arguments!["placementId"] ?? ""));
           break;
-        case "adLoadedFailed":
+        case "adFailed":
           _adListener?.onAdLoadFailedCallback(
               arguments!["placementId"] ?? "", AdError(arguments["errorMessage"] ?? ""));
           break;
-        case "adShown":
+        case "adComleted":
           _adListener?.onAdDisplayedCallback.call(Ad(arguments!["placementId"] ?? ""));
-          break;
-        case "adShwonFailed":
-          _adListener?.onAdDisplayFailedCallback(
-              Ad(arguments!["placementId"] ?? ""), AdError(arguments["errorMessage"] ?? ""));
           break;
         default:
           throw MissingPluginException("Method not implemented, $method");
